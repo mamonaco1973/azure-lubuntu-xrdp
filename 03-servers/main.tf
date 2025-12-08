@@ -34,7 +34,7 @@ data "azurerm_client_config" "current" {}
 variable "resource_group_name" {
   description = "Name of the Azure Resource Group for the project"
   type        = string
-  default     = "xubuntu-project-rg"
+  default     = "lubuntu-project-rg"
 }
 
 # ------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ variable "resource_group_name" {
 variable "network_resource_group_name" {
   description = "Name of the Resource Group for networking resources"
   type        = string
-  default     = "xubuntu-network-rg"
+  default     = "lubuntu-network-rg"
 }
 
 # ------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ variable "vault_name" {
 # ------------------------------------------------------------------------------
 # Load details for the main project resource group
 # ------------------------------------------------------------------------------
-data "azurerm_resource_group" "xubuntu" {
+data "azurerm_resource_group" "lubuntu" {
   name = var.resource_group_name
 }
 
@@ -96,7 +96,7 @@ data "azurerm_key_vault" "ad_key_vault" {
 # ------------------------------------------------------------------------------
 # Input variable: name of the custom Xubuntu image in Azure
 # ------------------------------------------------------------------------------
-variable "xubuntu_image_name" {
+variable "lubuntu_image_name" {
   description = "Name of the custom Azure Linux image"
   type        = string
 }
@@ -104,7 +104,7 @@ variable "xubuntu_image_name" {
 # ------------------------------------------------------------------------------
 # Load custom Xubuntu image from the resource group
 # ------------------------------------------------------------------------------
-data "azurerm_image" "xubuntu_image" {
-  name                = var.xubuntu_image_name
-  resource_group_name = data.azurerm_resource_group.xubuntu.name
+data "azurerm_image" "lubuntu_image" {
+  name                = var.lubuntu_image_name
+  resource_group_name = data.azurerm_resource_group.lubuntu.name
 }

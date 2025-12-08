@@ -1,12 +1,12 @@
 #!/bin/bash
 # ==============================================================================
-# Build Script for Xubuntu XRDP Project on Azure
+# Build Script for Lubuntu XRDP Project on Azure
 # Purpose:
 #   - Validates the environment and prerequisites before deployment.
 #   - Deploys the project in two phases:
 #       1. Directory layer: Key Vault, Mini-AD and base infra.
-#       2. Server layer: Xubuntu VM, AD Admin VM, and secrets.
-#   - Uses Packer to build the Xubuntu image before server deployment.
+#       2. Server layer: Lubuntu VM, AD Admin VM, and secrets.
+#   - Uses Packer to build the Lubuntu image before server deployment.
 # Notes:
 #   - Assumes Azure CLI and Terraform are installed and logged in.
 #   - Assumes check_env.sh validates required vars and tools.
@@ -39,7 +39,7 @@ fi
 cd ..
 
 # ------------------------------------------------------------------------------
-# Build Xubuntu image with Packer
+# Build Lubuntu image with Packer
 # ------------------------------------------------------------------------------
 cd 02-packer
 
@@ -49,28 +49,28 @@ packer build \
  -var="client_secret=$ARM_CLIENT_SECRET" \
  -var="subscription_id=$ARM_SUBSCRIPTION_ID" \
  -var="tenant_id=$ARM_TENANT_ID" \
- -var="resource_group=xubuntu-project-rg" \
- xubuntu_image.pkr.hcl
+ -var="resource_group=lubuntu-project-rg" \
+ lubuntu_image.pkr.hcl
 
 cd ..
 
 # ------------------------------------------------------------------------------
-# Deploy server layer (AD Admin VM and Xubuntu VM)
+# Deploy server layer (AD Admin VM and Lubuntu VM)
 # ------------------------------------------------------------------------------
 cd 03-servers
 
 # ------------------------------------------------------------------------------
-# Fetch latest Xubuntu image from packer resource group
+# Fetch latest Lubuntu image from packer resource group
 # ------------------------------------------------------------------------------
-xubuntu_image_name=$(az image list \
-  --resource-group xubuntu-project-rg \
-  --query "[?starts_with(name, 'xubuntu_image')]|sort_by(@, &name)[-1].name" \
+lubuntu_image_name=$(az image list \
+  --resource-group lubuntu-project-rg \
+  --query "[?starts_with(name, 'lubuntu_image')]|sort_by(@, &name)[-1].name" \
   --output tsv)
 
-echo "NOTE: Using latest Xubuntu image: $xubuntu_image_name"
+echo "NOTE: Using latest Lubuntu image: $lubuntu_image_name"
 
-if [ -z "$xubuntu_image_name" ]; then
-  echo "ERROR: No Xubuntu image found in xubuntu-project-rg."
+if [ -z "$lubuntu_image_name" ]; then
+  echo "ERROR: No Lubuntu image found in lubuntu-project-rg."
   exit 1
 fi
 
@@ -78,7 +78,7 @@ fi
 # Discover Key Vault created in Phase 1
 # ------------------------------------------------------------------------------
 vault=$(az keyvault list \
-  --resource-group xubuntu-network-rg \
+  --resource-group lubuntu-network-rg \
   --query "[?starts_with(name, 'ad-key-vault')].name | [0]" \
   --output tsv)
 
@@ -91,7 +91,7 @@ echo "NOTE: Using Key Vault: $vault"
 terraform init
 terraform apply \
   -var="vault_name=$vault" \
-  -var="xubuntu_image_name=$xubuntu_image_name" \
+  -var="lubuntu_image_name=$lubuntu_image_name" \
   -auto-approve
 
 cd ..
