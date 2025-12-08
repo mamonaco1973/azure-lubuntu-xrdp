@@ -22,8 +22,9 @@ set -euo pipefail
 sudo apt-get update -y
 sudo apt-get install -y xrdp
 
+
 # ================================================================================
-# Step 2: Replace /etc/xrdp/startwm.sh with XFCE session launcher
+# Step 2: Replace /etc/xrdp/startwm.sh with LXQt session launcher
 # ================================================================================
 sudo tee /etc/xrdp/startwm.sh >/dev/null <<'EOF'
 #!/bin/sh
@@ -42,7 +43,15 @@ if test -r ~/.profile; then
     . ~/.profile
 fi
 
-startxfce4
+# -------------------------------------------------------------------------------
+# Force LXQt desktop environment for all XRDP sessions
+# -------------------------------------------------------------------------------
+export DESKTOP_SESSION=lxqt
+export XDG_SESSION_DESKTOP=lxqt
+export XDG_CURRENT_DESKTOP=lxqt
+
+exec startlxqt
+
 EOF
 
 # ================================================================================
