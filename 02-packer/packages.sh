@@ -18,7 +18,14 @@ sudo snap remove --purge snapd
 sudo apt-get purge -y snapd
 echo -e "Package: snapd\nPin: release *\nPin-Priority: -10" \
  | sudo tee /etc/apt/preferences.d/nosnap.pref
-sudo apt-get update -y
+ 
+systemctl stop unattended-upgrades || true
+systemctl stop apt-daily.service apt-daily-upgrade.service || true
+
+apt-get update -y
+apt-get upgrade -y
+apt-get autoremove -y
+apt-get clean
 
 # ------------------------------------------------------------------------------------------
 # Install Core AD, NSS, Samba, Kerberos, NFS, and Utility Packages
